@@ -14,10 +14,12 @@ import EditTaskModal from "./ModalEdit";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ModalCardDetails from "./ModalCardDetails";
+import { UserAuth } from "../context/authContext";
 
 const Cards = ({ task }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
+  const { user } = UserAuth();
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
@@ -70,13 +72,15 @@ const Cards = ({ task }) => {
               <CheckCircleOutlineIcon />
             )}
           </IconButton>
-          <IconButton
-            edge="end"
-            aria-label="block"
-            onClick={() => handleBlockTask()}
-          >
-            {task.data.blocked ? <LockIcon /> : <LockOpenIcon />}
-          </IconButton>
+          {user.email === task.data.createBy && (
+            <IconButton
+              edge="end"
+              aria-label="block"
+              onClick={() => handleBlockTask()}
+            >
+              {task.data.blocked ? <LockIcon /> : <LockOpenIcon />}
+            </IconButton>
+          )}
           <IconButton
             edge="end"
             aria-label="edit"
@@ -98,7 +102,9 @@ const Cards = ({ task }) => {
 
       <EditTaskModal
         open={openEdit}
-        taskData={task}
+        taskId={task.id}
+        oldTitle={task.data.title}
+        oldDescription={task.data.description}
         handleClose={handleCloseEdit}
       />
       <ModalCardDetails

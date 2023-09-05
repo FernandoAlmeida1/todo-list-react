@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/authContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { googleSignIn, user } = UserAuth();
 
   const handleGoogleSignIn = async () => {
@@ -18,8 +19,11 @@ function LoginPage() {
   };
 
   useEffect(() => {
-    if (user !== null) {
-      navigate("/todoListPage");
+    if (user !== null && !location.state?.mode) {
+      navigate("/todo-list-react/todoListPage");
+    } else if (location.state?.mode === "logout") {
+      window.history.replaceState({}, document.title);
+      window.location.reload();
     }
   }, [user]);
 

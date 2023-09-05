@@ -6,14 +6,16 @@ import { onSnapshot } from "firebase/firestore";
 import Cards from "../../components/Cards";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/authContext";
+import UsersList from "../../components/UsersList";
 
 function TodoListPage() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(null);
   const [open, setOpen] = useState(false);
-  const [listUser, setListUser] = useState(null);
+  const [listUsers, setListUsers] = useState(null);
 
   const { logOut, user } = UserAuth();
   const navigate = useNavigate();
+  console.log(tasks);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -21,7 +23,7 @@ function TodoListPage() {
   const handleSignOut = async () => {
     try {
       await logOut();
-      navigate("/", {
+      navigate("/todo-list-react/", {
         state: {
           mode: "logout",
         },
@@ -32,34 +34,32 @@ function TodoListPage() {
   };
 
   useEffect(() => {
-    if (user !== null) {
-      const queryUser = getAllUsers();
+    const queryUsers = getAllUsers();
 
-      onSnapshot(queryUser, (querySnapshot) => {
-        setListUser(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-          }))
-        );
-      });
-    }
-  }, [user]);
+    onSnapshot(queryUsers, (querySnapshot) => {
+      setListUsers(
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+  }, []);
 
   useEffect(() => {
-    if (
-      listUser !== null &&
-      listUser.filter((user) => user.email === user.email).length === 0
-    ) {
-      addUser({
-        email: user.email,
-        name: user.displayName,
-        photoURL: user.photoURL,
-      });
+    if (user !== null && listUsers !== null) {
+      if (
+        listUsers.filter((listUser) => listUser.data.email === user.email)
+          .length === 0
+      ) {
+        addUser({
+          email: user.email,
+          name: user.displayName,
+          photoURL: user.photoURL,
+        });
+      }
     }
-  }, [listUser]);
-
-  console.log(listUser, "--------------");
+  }, [listUsers, user]);
 
   useEffect(() => {
     const q = getAllTasks();
@@ -70,43 +70,44 @@ function TodoListPage() {
           data: doc.data(),
         }))
       );
-      //   setIsLoading(false);
     });
   }, []);
 
   return (
-    <Container maxWidth="sm">
-      <Box display="flex" position="absolute" right="20px">
-        <Button onClick={handleSignOut} variant="contained" color="primary">
-          Log Out
+    tasks && (
+      <Container maxWidth="sm">
+        <UsersList users={listUsers} />
+        <Box display="flex" position="absolute" right="20px">
+          <Button onClick={handleSignOut} variant="contained" color="primary">
+            Log Out
+          </Button>
+        </Box>
+        <Typography variant="h4" component="h1" align="center" gutterBottom>
+          Lista de Tarefas
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={handleOpen}
+        >
+          Criar Tarefa
         </Button>
-      </Box>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
-        Lista de Tarefas
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        fullWidth
-        onClick={handleOpen}
-      >
-        Criar Tarefa
-      </Button>
 
-      <List>
-        {tasks
-          .sort((a, b) => {
-            return (
-              new Date(b.data.createdAt.seconds * 1000) -
-              new Date(a.data.createdAt.seconds * 1000)
-            );
-          })
-          .map((task, index) => (
-            <Cards task={task} key={index} />
-          ))}
-      </List>
-      <AddTaskModal open={open} handleClose={handleClose} />
-    </Container>
+        <List>
+          {tasks &&
+            tasks
+              .sort((a, b) => {
+                return (
+                  new Date(b.data.createdAt.seconds * 1000) -
+                  new Date(a.data.createdAt.seconds * 1000)
+                );
+              })
+              .map((task) => <Cards task={task} key={task.id} />)}
+        </List>
+        <AddTaskModal open={open} handleClose={handleClose} />
+      </Container>
+    )
   );
 }
 

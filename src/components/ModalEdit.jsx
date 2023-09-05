@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, Modal, TextField } from "@mui/material";
 import { editTask } from "../services/firebase";
-import { Timestamp } from "firebase/firestore";
 
 const style = {
   position: "absolute",
@@ -15,16 +14,20 @@ const style = {
   p: 4,
 };
 
-const EditTaskModal = ({ open, handleClose, taskData }) => {
-  const [title, setTitle] = useState(taskData.data.title);
-  const [description, setDescription] = useState(taskData.data.description);
+const EditTaskModal = ({
+  open,
+  handleClose,
+  taskId,
+  oldTitle,
+  oldDescription,
+}) => {
+  const [title, setTitle] = useState(oldTitle);
+  const [description, setDescription] = useState(oldDescription);
+
+  console.log(oldTitle, oldDescription);
 
   const handleEditTask = () => {
-    editTask(taskData.id, {
-      blocked: false,
-      completed: false,
-      createdAt: Timestamp.now(),
-      createBy: "fernando.ocrim@gmail.com",
+    editTask(taskId, {
       title: title,
       description: description,
     });
@@ -32,37 +35,35 @@ const EditTaskModal = ({ open, handleClose, taskData }) => {
   };
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <TextField
-            sx={{ width: "100%" }}
-            id="outlined-basic"
-            label="Titulo"
-            variant="outlined"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <TextField
-            sx={{ width: "100%" }}
-            id="outlined-basic"
-            label="Descrição"
-            variant="outlined"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <Box display="flex" justifyContent="end">
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button onClick={handleEditTask}>Editar Tarefa</Button>
-          </Box>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <TextField
+          sx={{ width: "100%", marginBottom: "20px" }}
+          id="outlined-basic"
+          label="Titulo"
+          variant="outlined"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <TextField
+          sx={{ width: "100%" }}
+          id="outlined-basic"
+          label="Descrição"
+          variant="outlined"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <Box display="flex" justifyContent="end">
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleEditTask}>Editar Tarefa</Button>
         </Box>
-      </Modal>
-    </div>
+      </Box>
+    </Modal>
   );
 };
 

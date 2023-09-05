@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Modal, TextField } from "@mui/material";
 import { addTask } from "../services/firebase";
 import { Timestamp } from "firebase/firestore";
+import { UserAuth } from "../context/authContext";
 
 const style = {
   position: "absolute",
@@ -18,13 +19,14 @@ const style = {
 const AddTaskModal = ({ open, handleClose }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const { user } = UserAuth();
 
   const handleAddTask = () => {
     addTask({
       blocked: false,
       completed: false,
       createdAt: Timestamp.now(),
-      createBy: "fernando.ocrim@gmail.com",
+      createBy: user.email,
       title: title,
       description: description,
     });
@@ -43,7 +45,7 @@ const AddTaskModal = ({ open, handleClose }) => {
       >
         <Box sx={style}>
           <TextField
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", marginBottom: "20px" }}
             id="outlined-basic"
             label="Titulo"
             variant="outlined"
