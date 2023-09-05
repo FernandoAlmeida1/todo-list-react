@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container, Typography, Button, List, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  List,
+  Box,
+  TextField,
+} from "@mui/material";
 import AddTaskModal from "../../components/ModalCreate";
 import { addUser, getAllTasks, getAllUsers } from "../../services/firebase";
 import { onSnapshot } from "firebase/firestore";
@@ -12,10 +19,10 @@ function TodoListPage() {
   const [tasks, setTasks] = useState(null);
   const [open, setOpen] = useState(false);
   const [listUsers, setListUsers] = useState(null);
+  const [filterUser, setFilterUser] = useState("");
 
   const { logOut, user } = UserAuth();
   const navigate = useNavigate();
-  console.log(tasks);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -85,6 +92,15 @@ function TodoListPage() {
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Lista de Tarefas
         </Typography>
+        <TextField
+          style={{ width: "100%", marginBottom: "10px" }}
+          id="outlined-basic"
+          label="filtro de usuario"
+          variant="outlined"
+          value={filterUser}
+          onChange={(e) => setFilterUser(e.target.value)}
+        />
+
         <Button
           variant="contained"
           color="primary"
@@ -97,6 +113,7 @@ function TodoListPage() {
         <List>
           {tasks &&
             tasks
+              .filter((task) => task.data.createBy.includes(filterUser))
               .sort((a, b) => {
                 return (
                   new Date(b.data.createdAt.seconds * 1000) -

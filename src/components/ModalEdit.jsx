@@ -24,8 +24,6 @@ const EditTaskModal = ({
   const [title, setTitle] = useState(oldTitle);
   const [description, setDescription] = useState(oldDescription);
 
-  console.log(oldTitle, oldDescription);
-
   const handleEditTask = () => {
     editTask(taskId, {
       title: title,
