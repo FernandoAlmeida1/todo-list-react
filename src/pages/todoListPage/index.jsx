@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Typography, Button, List, Box } from "@mui/material";
-import AddTaskModal from "../../components/Modal";
+import AddTaskModal from "../../components/ModalCreate";
 import { addUser, getAllTasks, getAllUsers } from "../../services/firebase";
 import { onSnapshot } from "firebase/firestore";
 import Cards from "../../components/Cards";
