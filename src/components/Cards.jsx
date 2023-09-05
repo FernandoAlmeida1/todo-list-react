@@ -14,12 +14,10 @@ import EditTaskModal from "./ModalEdit";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ModalCardDetails from "./ModalCardDetails";
-import { UserAuth } from "../context/authContext";
 
-const Cards = ({ task }) => {
+const Cards = ({ task, user }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
-  const { user } = UserAuth();
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
@@ -55,12 +53,14 @@ const Cards = ({ task }) => {
     <>
       <ListItem>
         <ListItemText
+          data-testid="title-card"
           primary={task.data.title}
           onClick={handleOpenDetails}
           sx={{ textDecoration: task.data.completed ? "line-through" : "none" }}
         />
         <ListItemSecondaryAction>
           <IconButton
+            data-testid="complete-button"
             edge="end"
             aria-label="block"
             onClick={() => handleCompletedTask()}
@@ -74,6 +74,7 @@ const Cards = ({ task }) => {
           </IconButton>
           {user.email === task.data.createBy && (
             <IconButton
+              data-testid="block-button"
               edge="end"
               aria-label="block"
               onClick={() => handleBlockTask()}
@@ -83,6 +84,7 @@ const Cards = ({ task }) => {
           )}
           <IconButton
             edge="end"
+            data-testid="edit-button"
             aria-label="edit"
             disabled={task.data.blocked}
             onClick={() => handleOpenEdit()}

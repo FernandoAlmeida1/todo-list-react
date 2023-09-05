@@ -103,7 +103,7 @@ function TodoListPage() {
                   new Date(a.data.createdAt.seconds * 1000)
                 );
               })
-              .map((task) => <Cards task={task} key={task.id} />)}
+              .map((task) => <Cards user={user} task={task} key={task.id} />)}
         </List>
         <AddTaskModal open={open} handleClose={handleClose} />
       </Container>

@@ -1,10 +1,9 @@
-import { Avatar, Box, Button, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Tooltip } from "@mui/material";
 import React from "react";
 
 // import { Container } from './styles';
 
 function UsersList({ users }) {
-  console.log(users);
   return (
     <Box display="flex" position="absolute" left="20px" gap="10px">
       {users.map((user) => {
